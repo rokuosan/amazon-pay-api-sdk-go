@@ -55,7 +55,7 @@ func main() {
     }
 
     payload := amazonpay.CreateCheckoutSessionRequest{
-        WebCheckoutDetails: amazonpay.WebCheckoutDetails{
+        WebCheckoutDetails: &amazonpay.WebCheckoutDetails{
             CheckoutReviewReturnURL: "https://example.com/review",
             CheckoutResultReturnURL: "https://example.com/result",
         },

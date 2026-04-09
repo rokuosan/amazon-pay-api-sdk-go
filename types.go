@@ -62,8 +62,8 @@ const (
 
 // RecurringMetadata specifies recurring payment schedule metadata.
 type RecurringMetadata struct {
-	Frequency UnitFrequency `json:"frequency,omitempty"`
-	Amount    Price         `json:"amount,omitempty"`
+	Frequency *UnitFrequency `json:"frequency,omitempty"`
+	Amount    *Price         `json:"amount,omitempty"`
 }
 
 // UnitFrequency represents recurring interval values.
@@ -74,8 +74,8 @@ type UnitFrequency struct {
 
 // PaymentDetails includes amount and payment behavior details.
 type PaymentDetails struct {
-	ChargeAmount                  Price  `json:"chargeAmount,omitempty"`
-	TotalOrderAmount              Price  `json:"totalOrderAmount,omitempty"`
+	ChargeAmount                  *Price `json:"chargeAmount,omitempty"`
+	TotalOrderAmount              *Price `json:"totalOrderAmount,omitempty"`
 	SoftDescriptor                string `json:"softDescriptor,omitempty"`
 	AllowOvercharge               bool   `json:"allowOvercharge,omitempty"`
 	CanHandlePendingAuthorization bool   `json:"canHandlePendingAuthorization,omitempty"`
@@ -83,10 +83,10 @@ type PaymentDetails struct {
 
 // CreateCheckoutSessionRequest maps checkout session creation payload.
 type CreateCheckoutSessionRequest struct {
-	WebCheckoutDetails   WebCheckoutDetails   `json:"webCheckoutDetails,omitempty"`
+	WebCheckoutDetails   *WebCheckoutDetails  `json:"webCheckoutDetails,omitempty"`
 	StoreID              string               `json:"storeId,omitempty"`
 	MerchantMetadata     map[string]string    `json:"merchantMetadata,omitempty"`
-	PaymentDetails       PaymentDetails       `json:"paymentDetails,omitempty"`
+	PaymentDetails       *PaymentDetails      `json:"paymentDetails,omitempty"`
 	ChargePermissionType ChargePermissionType `json:"chargePermissionType,omitempty"`
 	RecurringMetadata    *RecurringMetadata   `json:"recurringMetadata,omitempty"`
 	PlatformID           string               `json:"platformId,omitempty"`
@@ -95,14 +95,14 @@ type CreateCheckoutSessionRequest struct {
 
 // UpdateCheckoutSessionRequest maps checkout session update payload.
 type UpdateCheckoutSessionRequest struct {
-	WebCheckoutDetails WebCheckoutDetails `json:"webCheckoutDetails,omitempty"`
-	PaymentDetails     PaymentDetails     `json:"paymentDetails,omitempty"`
-	MerchantMetadata   map[string]string  `json:"merchantMetadata,omitempty"`
+	WebCheckoutDetails *WebCheckoutDetails `json:"webCheckoutDetails,omitempty"`
+	PaymentDetails     *PaymentDetails     `json:"paymentDetails,omitempty"`
+	MerchantMetadata   map[string]string   `json:"merchantMetadata,omitempty"`
 }
 
 // CompleteCheckoutSessionRequest maps checkout session completion payload.
 type CompleteCheckoutSessionRequest struct {
-	ChargeAmount Price `json:"chargeAmount,omitempty"`
+	ChargeAmount *Price `json:"chargeAmount,omitempty"`
 }
 
 // UpdateChargePermissionRequest maps charge permission update payload.
@@ -119,7 +119,7 @@ type CloseChargePermissionRequest struct {
 // CreateChargeRequest maps charge creation payload.
 type CreateChargeRequest struct {
 	ChargePermissionID            string `json:"chargePermissionId,omitempty"`
-	ChargeAmount                  Price  `json:"chargeAmount,omitempty"`
+	ChargeAmount                  *Price `json:"chargeAmount,omitempty"`
 	CaptureNow                    bool   `json:"captureNow,omitempty"`
 	SoftDescriptor                string `json:"softDescriptor,omitempty"`
 	CanHandlePendingAuthorization bool   `json:"canHandlePendingAuthorization,omitempty"`
@@ -127,7 +127,7 @@ type CreateChargeRequest struct {
 
 // CaptureChargeRequest maps capture payload for an authorized charge.
 type CaptureChargeRequest struct {
-	CaptureAmount  Price  `json:"captureAmount,omitempty"`
+	CaptureAmount  *Price `json:"captureAmount,omitempty"`
 	SoftDescriptor string `json:"softDescriptor,omitempty"`
 }
 
@@ -139,7 +139,7 @@ type CancelChargeRequest struct {
 // CreateRefundRequest maps refund creation payload.
 type CreateRefundRequest struct {
 	ChargeID       string `json:"chargeId,omitempty"`
-	RefundAmount   Price  `json:"refundAmount,omitempty"`
+	RefundAmount   *Price `json:"refundAmount,omitempty"`
 	SoftDescriptor string `json:"softDescriptor,omitempty"`
 }
 
@@ -151,8 +151,8 @@ type DeliveryTrackerDetails struct {
 
 // DeliveryTrackersRequest maps deliveryTrackers API payload.
 type DeliveryTrackersRequest struct {
-	ChargeID               string                 `json:"chargeId,omitempty"`
-	DeliveryTrackerDetails DeliveryTrackerDetails `json:"deliveryTrackerDetails,omitempty"`
+	ChargeID               string                  `json:"chargeId,omitempty"`
+	DeliveryTrackerDetails *DeliveryTrackerDetails `json:"deliveryTrackerDetails,omitempty"`
 }
 
 // MerchantScanRequest maps in-store merchant scan payload.
@@ -163,12 +163,12 @@ type MerchantScanRequest struct {
 // InStoreChargeRequest maps in-store charge payload.
 type InStoreChargeRequest struct {
 	ScanData       string `json:"scanData,omitempty"`
-	ChargeAmount   Price  `json:"chargeAmount,omitempty"`
+	ChargeAmount   *Price `json:"chargeAmount,omitempty"`
 	SoftDescriptor string `json:"softDescriptor,omitempty"`
 }
 
 // InStoreRefundRequest maps in-store refund payload.
 type InStoreRefundRequest struct {
 	ChargeID     string `json:"chargeId,omitempty"`
-	RefundAmount Price  `json:"refundAmount,omitempty"`
+	RefundAmount *Price `json:"refundAmount,omitempty"`
 }
