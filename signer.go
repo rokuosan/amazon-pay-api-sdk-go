@@ -8,9 +8,11 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"net/url"
 	"sort"
 	"strings"
 )
@@ -40,8 +42,11 @@ func AsHTTPError(err error, target **HTTPError) bool {
 func (c *Client) SignHeaders(req APIRequest, payload string) (map[string]string, error) {
 	host, _ := endpointHost(c.cfg.Region)
 	if c.cfg.OverrideServiceURL != "" {
-		host = strings.TrimPrefix(strings.TrimPrefix(c.cfg.OverrideServiceURL, "https://"), "http://")
-		host = strings.TrimSuffix(host, "/")
+		parsed, err := url.Parse(c.cfg.OverrideServiceURL)
+		if err != nil {
+			return nil, fmt.Errorf("amazonpay: parse OverrideServiceURL: %w", err)
+		}
+		host = parsed.Host
 	}
 
 	headers := map[string]string{}
@@ -50,13 +55,17 @@ func (c *Client) SignHeaders(req APIRequest, payload string) (map[string]string,
 	}
 	headers["x-amz-pay-region"] = normalizeRegion(c.cfg.Region)
 	headers["x-amz-pay-host"] = host
-	headers["x-amz-pay-date"] = c.cfg.Now().UTC().Format("2006-01-02T15:04:05Z")
+	headers["x-amz-pay-date"] = c.cfg.Now().UTC().Format("20060102T150405Z")
 	headers["content-type"] = "application/json"
 	headers["accept"] = "application/json"
 	headers["user-agent"] = c.cfg.UserAgent
 
 	sorted := sortedHeaderKeys(headers)
-	signedHeaders := strings.Join(sorted, ";")
+	lowerSignedHeaders := make([]string, 0, len(sorted))
+	for _, k := range sorted {
+		lowerSignedHeaders = append(lowerSignedHeaders, strings.ToLower(k))
+	}
+	signedHeaders := strings.Join(lowerSignedHeaders, ";")
 
 	canonical := req.Method + "\n/" + strings.TrimLeft(req.Path, "/") + "\n" + encodeQuery(req.QueryParams) + "\n"
 	for _, k := range sorted {
@@ -86,7 +95,11 @@ func (c *Client) GenerateButtonSignature(payload any) (string, error) {
 	case []byte:
 		payloadText = string(p)
 	default:
-		return "", errors.New("amazonpay: GenerateButtonSignature payload must be string or []byte")
+		b, err := json.Marshal(payload)
+		if err != nil {
+			return "", fmt.Errorf("amazonpay: marshal button payload: %w", err)
+		}
+		payloadText = string(b)
 	}
 	alg, saltLen, err := resolveAlgorithm(c.cfg.Algorithm)
 	if err != nil {
