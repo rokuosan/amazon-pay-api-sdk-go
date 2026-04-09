@@ -1,25 +1,26 @@
 # amazon-pay-api-sdk-go
 
-Amazon Pay API向けのGo SDKです。Goらしい`Client`中心の設計で、`context.Context`、`net/http`、および署名付きリクエスト生成を提供します。
+A Go SDK for the Amazon Pay API.
+It follows an idiomatic Go design with a `Client`-centric interface, `context.Context` support, and `net/http` integration.
 
-## 現在の実装内容
+## Current Implementation
 
-このSDKには以下が実装されています。
+This SDK currently includes:
 
-- `Config`バリデーションとリージョン別エンドポイント解決
-- Amazon Pay署名ヘッダー生成（`SignHeaders` / `GetSignedHeaders`）
-- ボタンペイロード署名生成（`GenerateButtonSignature`）
-- 低レベルAPI呼び出し（`APICall`）
-- 高レベルAPIメソッド群（Checkout / Charge / Refund / Reports / Disputes / In-Storeなど）
-- HTTPステータスに応じたリトライ（429、5xxなど）
+- `Config` validation and region-based endpoint resolution
+- Amazon Pay signed header generation (`SignHeaders` / `GetSignedHeaders`)
+- Button payload signature generation (`GenerateButtonSignature`)
+- Low-level request execution via `APICall`
+- High-level API helpers (Checkout, Charge, Refund, Reports, Disputes, In-Store, etc.)
+- Retry behavior for retryable HTTP statuses (for example, 429 and 5xx)
 
-## インストール
+## Install
 
 ```bash
 go get github.com/rokuosan/amazon-pay-api-sdk-go
 ```
 
-## クイックスタート
+## Quick Start
 
 ```go
 package main
@@ -71,29 +72,29 @@ func main() {
 }
 ```
 
-## 設計メモ
+## Design Notes
 
-- 高レベルメソッドは`*Response`を返し、レスポンスボディは`[]byte`で取得できます。
-- リクエストpayloadは`any`を受け取り、`string`/`[]byte`以外はJSONエンコードされます。
-- 追加ヘッダーは各メソッドの`headers map[string]string`で渡せます。
-- `APICall`で低レベルに`Method`/`Path`/`QueryParams`を直接指定できます。
+- High-level methods return `*Response` with raw response bytes (`[]byte`).
+- Request payloads accept `any`; non-`string` and non-`[]byte` payloads are JSON-encoded.
+- Additional headers can be passed using `headers map[string]string`.
+- `APICall` is available for low-level control of method/path/query/payload.
 
-## コンフィグ (`Config`)
+## Configuration (`Config`)
 
-`NewClient`に渡す主な項目:
+Main fields accepted by `NewClient`:
 
-- `PublicKeyID`（必須）
-- `PrivateKeyPEM`（必須）
-- `Region`（必須: `na/us/eu/de/uk/jp`）
-- `Environment`（`sandbox` or `live`）
-- `Algorithm`（`AMZN-PAY-RSASSA-PSS` or `AMZN-PAY-RSASSA-PSS-V2`）
-- `OverrideServiceURL`（テスト/モック向け）
-- `HTTPClient`（未指定時は`http.DefaultClient`）
-- `MaxRetries`（未指定時は`3`）
-- `Now`（時刻注入、テスト向け）
-- `UserAgent`（未指定時はSDK標準値）
+- `PublicKeyID` (required)
+- `PrivateKeyPEM` (required)
+- `Region` (required: `na/us/eu/de/uk/jp`)
+- `Environment` (`sandbox` or `live`)
+- `Algorithm` (`AMZN-PAY-RSASSA-PSS` or `AMZN-PAY-RSASSA-PSS-V2`)
+- `OverrideServiceURL` (useful for testing/mocking)
+- `HTTPClient` (defaults to `http.DefaultClient`)
+- `MaxRetries` (defaults to `3`)
+- `Now` (time injection, useful for tests)
+- `UserAgent` (defaults to an SDK-generated value)
 
-## 実装済みメソッド
+## Implemented Methods
 
 ### Checkout / Buyer / Charge Permission / Charge / Refund
 
@@ -148,11 +149,12 @@ func main() {
 - `ContestDispute`
 - `UploadFile`
 
-## エラーハンドリング
+## Error Handling
 
-- HTTPステータスが`>= 400`の場合は`*HTTPError`が返ります。
-- `AsHTTPError`ヘルパーでステータスコードやレスポンスボディを取得できます。
+- HTTP responses with status `>= 400` return `*HTTPError`.
+- Use `AsHTTPError` to inspect status code, headers, and response body.
 
-## 注意事項
+## Caveat
 
-署名やAPIの詳細仕様はセキュリティ上重要です。本SDKは公開情報をもとに実装されていますが、本番利用前にAmazon Payの最新公式仕様と突き合わせて検証してください。
+Request signing and API semantics are security-sensitive.
+Before production use, validate behavior against the latest official Amazon Pay specifications and integration tests.
