@@ -200,19 +200,19 @@ func (c *Client) GetAuthorizationToken(ctx context.Context, mwsAuthToken, mercha
 	return c.APICall(ctx, APIRequest{Method: http.MethodGet, Path: "authorizationTokens/" + mwsAuthToken, Headers: headers, QueryParams: map[string]string{"merchantId": merchantID}})
 }
 
-func (c *Client) DeliveryTrackers(ctx context.Context, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) DeliveryTrackers(ctx context.Context, payload DeliveryTrackersRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodPost, Path: "deliveryTrackers", Payload: payload, Headers: headers})
 }
 
-func (c *Client) MerchantScan(ctx context.Context, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) MerchantScan(ctx context.Context, payload MerchantScanRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodPost, Path: "in-store/merchantScan", Payload: payload, Headers: headers})
 }
 
-func (c *Client) InStoreCharge(ctx context.Context, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) InStoreCharge(ctx context.Context, payload InStoreChargeRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodPost, Path: "in-store/charge", Payload: payload, Headers: headers})
 }
 
-func (c *Client) InStoreRefund(ctx context.Context, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) InStoreRefund(ctx context.Context, payload InStoreRefundRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodPost, Path: "in-store/refund", Payload: payload, Headers: headers})
 }
 
@@ -220,7 +220,7 @@ func (c *Client) GetBuyer(ctx context.Context, buyerToken string, headers map[st
 	return c.APICall(ctx, APIRequest{Method: http.MethodGet, Path: "buyers/" + buyerToken, Headers: headers})
 }
 
-func (c *Client) CreateCheckoutSession(ctx context.Context, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) CreateCheckoutSession(ctx context.Context, payload CreateCheckoutSessionRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodPost, Path: "checkoutSessions", Payload: payload, Headers: headers})
 }
 
@@ -228,11 +228,11 @@ func (c *Client) GetCheckoutSession(ctx context.Context, checkoutSessionID strin
 	return c.APICall(ctx, APIRequest{Method: http.MethodGet, Path: "checkoutSessions/" + checkoutSessionID, Headers: headers})
 }
 
-func (c *Client) UpdateCheckoutSession(ctx context.Context, checkoutSessionID string, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) UpdateCheckoutSession(ctx context.Context, checkoutSessionID string, payload UpdateCheckoutSessionRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodPatch, Path: "checkoutSessions/" + checkoutSessionID, Payload: payload, Headers: headers})
 }
 
-func (c *Client) CompleteCheckoutSession(ctx context.Context, checkoutSessionID string, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) CompleteCheckoutSession(ctx context.Context, checkoutSessionID string, payload CompleteCheckoutSessionRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodPost, Path: "checkoutSessions/" + checkoutSessionID + "/complete", Payload: payload, Headers: headers})
 }
 
@@ -244,15 +244,15 @@ func (c *Client) GetChargePermission(ctx context.Context, chargePermissionID str
 	return c.APICall(ctx, APIRequest{Method: http.MethodGet, Path: "chargePermissions/" + chargePermissionID, Headers: headers})
 }
 
-func (c *Client) UpdateChargePermission(ctx context.Context, chargePermissionID string, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) UpdateChargePermission(ctx context.Context, chargePermissionID string, payload UpdateChargePermissionRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodPatch, Path: "chargePermissions/" + chargePermissionID, Payload: payload, Headers: headers})
 }
 
-func (c *Client) CloseChargePermission(ctx context.Context, chargePermissionID string, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) CloseChargePermission(ctx context.Context, chargePermissionID string, payload CloseChargePermissionRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodDelete, Path: "chargePermissions/" + chargePermissionID + "/close", Payload: payload, Headers: headers})
 }
 
-func (c *Client) CreateCharge(ctx context.Context, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) CreateCharge(ctx context.Context, payload CreateChargeRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodPost, Path: "charges", Payload: payload, Headers: headers})
 }
 
@@ -264,15 +264,15 @@ func (c *Client) UpdateCharge(ctx context.Context, chargeID string, payload any,
 	return c.APICall(ctx, APIRequest{Method: http.MethodPatch, Path: "charges/" + chargeID, Payload: payload, Headers: headers})
 }
 
-func (c *Client) CaptureCharge(ctx context.Context, chargeID string, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) CaptureCharge(ctx context.Context, chargeID string, payload CaptureChargeRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodPost, Path: "charges/" + chargeID + "/capture", Payload: payload, Headers: headers})
 }
 
-func (c *Client) CancelCharge(ctx context.Context, chargeID string, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) CancelCharge(ctx context.Context, chargeID string, payload CancelChargeRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodDelete, Path: "charges/" + chargeID + "/cancel", Payload: payload, Headers: headers})
 }
 
-func (c *Client) CreateRefund(ctx context.Context, payload any, headers map[string]string) (*Response, error) {
+func (c *Client) CreateRefund(ctx context.Context, payload CreateRefundRequest, headers map[string]string) (*Response, error) {
 	return c.APICall(ctx, APIRequest{Method: http.MethodPost, Path: "refunds", Payload: payload, Headers: headers})
 }
 
