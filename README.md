@@ -54,12 +54,12 @@ func main() {
         panic(err)
     }
 
-    payload := map[string]any{
-        "webCheckoutDetails": map[string]any{
-            "checkoutReviewReturnUrl": "https://example.com/review",
-            "checkoutResultReturnUrl": "https://example.com/result",
+    payload := amazonpay.CreateCheckoutSessionRequest{
+        WebCheckoutDetails: &amazonpay.WebCheckoutDetails{
+            CheckoutReviewReturnURL: "https://example.com/review",
+            CheckoutResultReturnURL: "https://example.com/result",
         },
-        "storeId": "amzn1.application-oa2-client.xxxxx",
+        StoreID: "amzn1.application-oa2-client.xxxxx",
     }
 
     resp, err := client.CreateCheckoutSession(context.Background(), payload, amazonpay.WithIdempotencyKey("example-idempotency-key"))
@@ -76,7 +76,7 @@ func main() {
 
 - High-level methods return `*Response` with raw response bytes.
 - Callers can decode response JSON into their own structs.
-- Request payloads accept `any` and are encoded as JSON.
+- Request payloads are strongly typed for major Checkout/Charge flows and encoded as JSON.
 - Header customization is provided via request options.
 - The SDK exposes lower-level signing helpers for advanced use cases.
 
