@@ -64,9 +64,6 @@ func (c Config) validate() error {
 	if _, ok := endpointHost(c.Region); !ok {
 		return fmt.Errorf("amazonpay: unsupported region %q", c.Region)
 	}
-	if c.Algorithm == "" {
-		c.Algorithm = AlgorithmAMZNPayRSASSAPSS
-	}
 	if c.MaxRetries < 0 {
 		return errors.New("amazonpay: MaxRetries must be >= 0")
 	}

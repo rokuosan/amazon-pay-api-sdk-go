@@ -35,6 +35,9 @@ type APIRequest struct {
 }
 
 func NewClient(cfg Config) (*Client, error) {
+	if cfg.Algorithm == "" {
+		cfg.Algorithm = AlgorithmAMZNPayRSASSAPSS
+	}
 	if err := cfg.validate(); err != nil {
 		return nil, err
 	}
@@ -84,7 +87,7 @@ func (c *Client) APICall(ctx context.Context, req APIRequest) (*Response, error)
 	return nil, lastErr
 }
 
-func (c *Client) send(ctx context.Context, req APIRequest, payload string) (*Response, error) {
+func (c *Client) send(ctx context.Context, req APIRequest, payload string) (resp *Response, err error) {
 	baseURL := c.cfg.OverrideServiceURL
 	if baseURL == "" {
 		host, _ := endpointHost(c.cfg.Region)
@@ -107,7 +110,12 @@ func (c *Client) send(ctx context.Context, req APIRequest, payload string) (*Res
 	if err != nil {
 		return nil, err
 	}
-	defer httpResp.Body.Close()
+	defer func() {
+		closeErr := httpResp.Body.Close()
+		if err == nil && closeErr != nil {
+			err = closeErr
+		}
+	}()
 	body, err := io.ReadAll(httpResp.Body)
 	if err != nil {
 		return nil, err
